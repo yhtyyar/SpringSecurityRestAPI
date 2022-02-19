@@ -4,6 +4,11 @@
       "linux"
   ],
   "dist": "xenial",
+
+  "before_install": [
+      "– chmod +x gradlew"
+  ],
+
   "jdk": [
       "-openjdk11"
   ],
