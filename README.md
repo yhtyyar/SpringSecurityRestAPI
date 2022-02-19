@@ -1,5 +1,8 @@
 # SpringSecurityRestAPI
 
+[![Build Status](https://app.travis-ci.com/yhtyyar/SpringSecurityRestAPI.svg?branch=master)](https://app.travis-ci.com/yhtyyar/SpringSecurityRestAPI)
+
+
 Необходимо реализовать REST API, которое взаимодействует с файловым хранилищем AWS S3 и предоставляет возможность получать доступ к файлам и истории загрузок.
 
 ## Сущности:
