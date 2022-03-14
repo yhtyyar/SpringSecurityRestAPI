@@ -4,13 +4,14 @@ import com.java.SpringSecurityRestAPI.model.User;
 import com.java.SpringSecurityRestAPI.service.impl.UserServiceImpl;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
 public class UserRestControllerV1 {
 

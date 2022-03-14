@@ -2,17 +2,13 @@ package com.java.SpringSecurityRestAPI.service;
 
 import com.java.SpringSecurityRestAPI.model.File;
 
-import java.util.List;
+import java.io.InputStream;
+import java.util.Optional;
 
 public interface FileService {
 
-    File create(File file);
-
-    File update(File file);
-
-    File getById(Long id);
-
-    void deleteById(Long id);
-
-    List<File> getAll();
+    void upload(File file);
+    InputStream download (File file);
+    Optional<String> listFiles();
+    void deleteFile(String fileName);
 }

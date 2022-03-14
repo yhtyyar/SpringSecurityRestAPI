@@ -1,58 +1,71 @@
 package com.java.SpringSecurityRestAPI.rest;
 
-import com.java.SpringSecurityRestAPI.model.File;
+import com.java.SpringSecurityRestAPI.dto.FileDto;
 import com.java.SpringSecurityRestAPI.service.impl.FileServiceImpl;
-import com.java.SpringSecurityRestAPI.service.impl.S3ServiceImpl;
-import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/api/v1/files")
 public class FileRestControllerV1 {
 
 
     private final FileServiceImpl fileService;
-    private final S3ServiceImpl s3Service;
+
 
     @PostMapping
     @PreAuthorize("hasAuthority('files:write')")
-    public File create(@RequestBody @NonNull File file) {
-        s3Service.uploadFile(file);
-        return fileService.create(file);
+    public ResponseEntity<?> upload(@RequestBody @NonNull FileDto fileDto) {
+        fileService.upload(fileDto.toEntity());
+        return ResponseEntity.ok("File Uploaded Successfully");
     }
+
 
     @PutMapping
     @PreAuthorize("hasAuthority('files:write')")
-    public File update(@RequestBody @NonNull File file) {
-        //TODO you need to come up with an implementation of the update
-        return fileService.update(file);
+    public ResponseEntity<?> download(@RequestBody @NonNull FileDto fileDto) {
+        if (StringUtils.hasText(fileDto.getFileName())) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "File name is missing");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" +
+                fileDto.getFileName());
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+
+        InputStreamResource resource = new InputStreamResource(fileService.download(fileDto.toEntity()));
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .body(resource);
     }
+
 
     @GetMapping
     @PreAuthorize("hasAuthority('files:read')")
-    public List<File> getAll() {
-        s3Service.listFile();
-        return fileService.getAll();
+    public ResponseEntity<?> listFiles() {
+        return ResponseEntity.ok(fileService.listFiles()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No file present in bucket")));
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('files:read')")
-    public File getById(@PathVariable("id") Long id) {
-        // TODO need to come up with an implementation by id
-        return fileService.getById(id);
-    }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{fileName}")
     @PreAuthorize("hasAuthority('files:write')")
-    public void deleteById(@PathVariable("id") Long id) {
-        File file = fileService.getById(id);
-        s3Service.deleteFile(file);
-
-        fileService.deleteById(id);
+    public ResponseEntity<?> deleteFile(@PathVariable("fileName") String fileName) {
+        fileService.deleteFile(fileName);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

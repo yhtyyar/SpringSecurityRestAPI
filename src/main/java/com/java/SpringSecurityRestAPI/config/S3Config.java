@@ -6,24 +6,28 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.java.SpringSecurityRestAPI.properties.S3Properties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@RequiredArgsConstructor
 public class S3Config {
 
+    private final S3Properties s3Properties;
 
     @Bean
     public AmazonS3 s3client() {
         AWSCredentials credentials = new BasicAWSCredentials(
-                "AKIA55RLUV4QDZBOLBNA", //<AWS_ACCESS_KEY>
-                "O+zMyfb0/lW1x2yYlYxROlwecs/ezqVlNUW5gvZ2"  //<AWS_SECRET_KEY>
+                s3Properties.getAccessKey(),
+                s3Properties.getSecretKey()
         );
 
         return AmazonS3ClientBuilder
                 .standard()
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(Regions.US_EAST_1)
+                .withRegion(s3Properties.getRegion())
                 .build();
     }
 }

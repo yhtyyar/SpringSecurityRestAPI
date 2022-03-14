@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Table
@@ -29,4 +30,8 @@ public class File {
 
     @Column(name = "file_name")
     private String fileName;
+
+    @Column(name = "time_of_creating")
+    private LocalDateTime timeOfCreating;
+
 }

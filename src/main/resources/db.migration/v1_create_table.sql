@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS users
 (
     id         BIGINT AUTO_INCREMENT,
-    email      VARCHAR(256) NOT NULL,
+    email      VARCHAR(256) NOT NULL UNIQUE,
     password   VARCHAR(256) NOT NULL,
     first_name VARCHAR(256) NOT NULL,
     last_name  VARCHAR(256) NOT NULL,
@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS events
 (
     id         BIGINT AUTO_INCREMENT,
     user_id    BIGINT       NOT NULL,
-    event_name VARCHAR(256) NOT NULL,
+    event_name VARCHAR(256) NOT NULL UNIQUE,
     PRIMARY KEY(id)
 );
 
@@ -25,10 +25,11 @@ ALTER TABLE events
 
 CREATE TABLE IF NOT EXISTS files
 (
-    id         BIGINT AUTO_INCREMENT,
-    event_id   BIGINT NOT NULL,
-    location   VARCHAR(256) NOT NULL,
-    event_name VARCHAR(256) NOT NULL,
+    id                BIGINT AUTO_INCREMENT,
+    event_id          BIGINT       NOT NULL,
+    location          VARCHAR(256) NOT NULL,
+    file_name         VARCHAR(256) NOT NULL UNIQUE,
+    time_of_creating  TIMESTAMP,
     PRIMARY KEY(id)
 );
 

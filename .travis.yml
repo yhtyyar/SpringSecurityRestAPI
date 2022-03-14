@@ -6,7 +6,6 @@
   "dist": "xenial",
   "before_install": [
       " chmod +x gradlew"
-      "./gradlew check"
   ],
   "jdk": [
       "-openjdk11"
